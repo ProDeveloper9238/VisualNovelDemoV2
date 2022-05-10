@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang = "en">
+	<head>
+		<meta charset = "utf-8">
+		<link href = "style.css" rel = "stylesheet">
+		<title>Визуальная новелла</title>
+		<script src = "script.js"></script>
+		<script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+		<script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+		<script>
+			let page = 0;
+			let block = 0;
+			let char = 0;
+			let startChar = 0;
+			let interval = 0;
+			let inventory = [];
+			let hasBeenVisited = [];
+
+			function update(plusOrMinus) {
+				inventoryText = ``;
+				for (let i = 0; i < inventory.length; i++) {
+					if (inventory[i] === "key") {
+						inventoryText = inventoryText + `<td class = "inventoryTableData"><div class = "inventoryItem"><ion-icon name="key-outline"></ion-icon></div></td>`;
+					} else if (inventory[i] === "kit") {
+						inventoryText = inventoryText + `<td class = "inventoryTableData"><div class = "inventoryItem"><ion-icon name="medkit-outline"></ion-icon></div></td>`;
+					}
+				}
+				inventoryText = `<table class = "inventoryTable"><tr>` + inventoryText + `</tr></table>`;
+				document.getElementById("inventory").innerHTML = inventoryText;
+
+				if ((plusOrMinus === "plus") && (page != text[block].length - 1)) {
+					page++;
+						
+					
+
+					if (text[block][page].slice(0, 8) === "/choice3") {
+						char = 8;
+						startChar = 8;
+
+						if (block === 0) {
+							first = "Пункт управления";
+							
+							if (!(hasBeenVisited.includes(2))) {
+								second = "Склад";
+							} else {
+								second = "<i style = 'color:grey'>Склад</i>";
+							}
+
+							if (!(hasBeenVisited.includes(3))) {
+								third = "Шкафчик";
+							} else {
+								third = "<i style = 'color:grey'>Шкафчик</i>";
+							}
+						} 
+
+						document.getElementById("choice").innerHTML = `
+						<table class = "choiceTable">
+							<tr><td class = "choiceTableData"><div class = "choiceFirst" onclick = "choiceFirst()">` + first + `</div></td></tr>			
+							<tr><td class = "choiceTableData"><div class = "choiceSecond" onclick = "choiceSecond()">` + second + `</div></td></tr>
+							<tr><td class = "choiceTableData"><div class = "choiceThird" onclick = "choiceThird()">` + third + `</div></td></tr>
+						</table>`;
+					} else if (text[block][page].slice(0, 8) === "/choice2") {
+						char = 8;
+						startChar = 8;
+
+						if (block === 1) {
+							if (inventory.includes("key")) {
+								first = `Начать полет (<ion-icon name="key-outline"></ion-icon>)`;
+							} else {
+								first = `<i style = "color:grey">Начать полет (<ion-icon name="key-outline"></ion-icon>)</i>`;
+							}
+							
+							third = "Продолжить осмотр";
+						}
+
+						document.getElementById("choice").innerHTML = `
+						<table class = "choiceTable">
+							<tr><td class = "choiceTableData"><div class = "choiceFirst" onclick = "choiceFirst()">` + first + `</div></td></tr>			
+							<tr><td class = "choiceTableData"><div class = "choiceThird" onclick = "choiceThird()">` + third + `</div></td></tr>
+						</table>`;
+					} else if (text[block][page].slice(0, 2) === "/+") {
+						if (block === 3) {
+							inventory.push("key");
+							inventory.push("kit")
+							char = 2;
+							startChar = 2;
+						}
+					} else {
+						char = 0;
+						startChar = 0;
+						document.getElementById("choice").innerHTML = ``;
+					}
+
+					clearInterval(interval);
+					interval = setInterval(addChar, 15);
+				} else if ((plusOrMinus === "minus") && (page != 0)) {
+					page--;				
+					char = 0;
+					startChar = 0;
+					document.getElementById("choice").innerHTML = ``;
+			
+					clearInterval(interval);
+					interval = setInterval(addChar, 15);
+				} else if (plusOrMinus === "newBlock") {
+
+					if (text[block][page].slice(0, 2) === "/+") {
+						if (block === 3) {
+							inventory = inventory + ["key"] + ["kit"];
+							char = 2;
+							startChar = 2;
+						}
+					}
+
+					if (text[block][page].slice(0, 8) === "/choice3") {
+						char = 8;
+						startChar = 8;
+
+						if (block === 0) {
+							first = "Пункт управления";
+							
+							if (!(hasBeenVisited.includes(2))) {
+								second = "Склад";
+							} else {
+								second = "<i style = 'color:grey'>Склад</i>";
+							}
+
+							if (!(hasBeenVisited.includes(3))) {
+								third = "Шкафчик";
+							} else {
+								third = "<i style = 'color:grey'>Шкафчик</i>";
+							}
+						} 
+
+						document.getElementById("choice").innerHTML = `
+						<table class = "choiceTable">
+							<tr><td class = "choiceTableData"><div class = "choiceFirst" onclick = "choiceFirst()">` + first + `</div></td></tr>			
+							<tr><td class = "choiceTableData"><div class = "choiceSecond" onclick = "choiceSecond()">` + second + `</div></td></tr>
+							<tr><td class = "choiceTableData"><div class = "choiceThird" onclick = "choiceThird()">` + third + `</div></td></tr>
+						</table>`;
+					} else if (text[block][page].slice(0, 8) === "/choice2") {
+						char = 8;
+						startChar = 8;
+
+						if (block === 1) {
+							if (inventory.includes("key")) {
+								first = `Начать полет (<ion-icon name="key-outline"></ion-icon>)`;
+							} else {
+								first = `<i style = "color:grey">Начать полет (<ion-icon name="key-outline"></ion-icon>)</i>`;
+							}
+							
+							third = "Продолжить осмотр";
+						}
+
+						document.getElementById("choice").innerHTML = `
+						<table class = "choiceTable">
+							<tr><td class = "choiceTableData"><div class = "choiceFirst" onclick = "choiceFirst()">` + first + `</div></td></tr>			
+							<tr><td class = "choiceTableData"><div class = "choiceThird" onclick = "choiceThird()">` + third + `</div></td></tr>
+						</table>`;
+					} else if (text[block][page].slice(0, 2) === "/+") {
+						if (block === 3) {
+							inventory.push("key");
+							inventory.push("kit")
+							char = 2;
+							startChar = 2;
+						}
+					} else {
+						char = 0;
+						startChar = 0;
+						document.getElementById("choice").innerHTML = ``;
+					}
+
+					clearInterval(interval);
+					interval = setInterval(addChar, 15);
+				} else if ((plusOrMinus === "plus") && (page == text[block].length - 1)) {
+					if ((block === 3) || (block === 2)) {
+						block = 0;
+						page = text[block].length - 1;
+						update("newBlock")
+					}
+				}
+			} function addChar() {
+				document.getElementById("text").innerHTML = text[block][page].slice(startChar, char);
+				char++;
+
+				if (char === text[block][page].length + 1) {
+					clearInterval(interval);
+				}
+			} function choiceFirst() {
+				if (block === 0) {
+					block = 1;	
+					page = 0;
+					update("newBlock")	
+				} else if ((block === 1) && (inventory.includes("key"))) {
+					block = 4;
+					page = 0;
+
+					place = inventory.indexOf("key");
+					inventory.splice(place, 1)
+					update("newBlock");
+				}
+			} function choiceSecond() {
+				if ((block === 0) && !(hasBeenVisited.includes(2))) {
+					block = 2;	
+					page = 0;
+					hasBeenVisited.push(2);
+					update("newBlock");	
+				}				
+			} function choiceThird() {
+				if ((block === 0) && !(hasBeenVisited.includes(3))) {
+					block = 3;
+					page = 0;
+					hasBeenVisited.push(3);
+					update("newBlock");		
+				} else if (block === 1) {
+					block = 0;
+					page = 18;		
+					update("newBlock");
+				}	
+			}
+		</script>
+	</head>
+	<body>
+		<table>
+			<tr>
+				<td class = "inventoryTableData" id = "inventory">
+
+				</td>
+			</tr>
+			<tr>
+				<td class = "imagesTableData" colspan = "2" id = "choice">
+
+				</td>
+			</tr>
+			<tr>
+				<td class = "placeForText" rowspan = "2">
+					<div class = "text" id = "text"></div>
+				</td>
+				<td>
+					<div class = "nextButton" onclick = 'update("plus")'>След.</div>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<div class = "backButton" onclick = 'update("minus")'>Пред.</div>
+				</td>
+			</tr>
+		</table>
+		<script>
+			document.getElementById("text").innerHTML = text[0][0];
+
+			char = 0
+			interval = setInterval(addChar, 15);
+		</script>
+	</body>
+</html>
